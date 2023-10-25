@@ -18,14 +18,14 @@ int main() {
 	int cash_register = inputInteger("Enter the number of cash registers(1..10) :", 1, 10);
 
 	//variables for random number distribution
-	int line_start = 5, line_end = 10, customer_start = 0, customer_end = 1; 
+	int line_start = 0, line_end = 5, customer_start = 0, customer_end = 0;
 
 	//choice to change them to make the time more realistic
 	if (inputChar("\n\tDo you want to customize the simulation or leave it as a fast paced simulation (Y/N): ") == 'Y') {
-		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", true);
+		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 0, 1500);
 		line_end = inputInteger("\n\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start + 1, 5000);
 		customer_start = inputInteger("\n\tPlease put in the minimum time it will take for a customer to enter the line: ", 0, 1800);
-		customer_end = inputInteger("\n\tPlease put in the maximum time it will take for a customer to enter the line: ", customer_start + 1, 1800);
+		customer_end = inputInteger("\n\tPlease put in the maximum time it will take for a customer to enter the line: ", customer_start, 1800);
 	}
 
 	//creates the distribution
@@ -33,12 +33,12 @@ int main() {
 	uniform_int_distribution<int> customer_dist(customer_start, customer_end);
 
 	//to hold all queues, to hold individual queue
-	vector <queue<int>> CostCo_Line(cash_register); 
+	vector <queue<int>> CostCo_Line(cash_register);
 	queue <int> swap_Queue;
 
 	int new_customer = customer_dist(rng), served_amount = 0; //set first customer rng
 
-	do {		
+	do {
 		system("cls"); //clears output
 		cout << "\n\t CostCo warehouse store: " << second << "       Number of served customers : " << served_amount;
 
@@ -68,7 +68,7 @@ int main() {
 
 		//displays and changes CostCo_Line
 		for (int i = 0; i < CostCo_Line.size(); ++i) {
-			
+
 			//if line has many people
 			//else if line only has time stored and no people, empty so it is not displayed
 			if (CostCo_Line.at(i).size() > 1) {
@@ -83,7 +83,7 @@ int main() {
 
 				//subtracts one second as this is a way to ensure seconds start subtracting when
 				//there is at least one customer present
-				CostCo_Line.at(i).front() = CostCo_Line.at(i).front() - 1; 
+				CostCo_Line.at(i).front() = CostCo_Line.at(i).front() - 1;
 			}
 			else if (CostCo_Line.at(i).size() == 1)
 				CostCo_Line.at(i).pop();
@@ -94,7 +94,7 @@ int main() {
 			cout << "\n\t\tCash register #" << (i + 1);
 
 			//displays cash register and customers (as blocks)
-			for(int iter = 0; !CostCo_Line.at(i).empty(); ++iter){
+			for (int iter = 0; !CostCo_Line.at(i).empty(); ++iter) {
 				if (iter == 0) {
 					cout << "\n\t\t\t" << char(254) << CostCo_Line.at(i).front() << char(254) << " ";
 					CostCo_Line.at(i).pop();
@@ -119,7 +119,7 @@ int main() {
 		--second;
 
 		//to make more visible to person watching the simulation occur
-		this_thread::sleep_for(chrono::milliseconds(1000));
+		this_thread::sleep_for(chrono::milliseconds(100));
 	} while (second > -1);
 
 
