@@ -46,23 +46,23 @@ void option1()
 	srand(time(0));
 	int suite = 4;       //Contains the amount of suites in a deck of cards
 	int numberCards = 0; //Contains the amount of cards user inputs
-	deque<int> player1;
-	deque<int> player2;
-	bool winner = false;
+	deque<int> player1, player2;
 
 	cout << "\n\t1> Simulation of War (card game) using deque STL\n";
 	numberCards = inputInteger("\n\tEnter a number of cards per suite: ", 1, 13);
 
 	fillDeck(suite, numberCards, player1, player2);
 
-	do
+	while (!player1.empty() || !player2.empty())
 	{
 		int card1 = player1.front();
 		int card2 = player2.front();
+		player1.pop_front();
+		player2.pop_front();
 
 		if (card1 > card2)
 		{
-			cout << "\n\t\tPlayer1:  " << player1.front() << "\tPlayer2:  " << player2.front() << " -> Player1 wins!";
+			cout << "\n\t\tPlayer1:  " << card1 << "\tPlayer2:  " << card2 << " -> Player1 wins!";
 			player1.push_back(card1);
 			player1.push_back(card2);
 		}
@@ -71,28 +71,24 @@ void option1()
 			cout << "\n\t\tPlayer1:  " << player1.front() << "\tPlayer2:  " << player2.front() << " -> Player2 wins!";
 			player2.push_back(card1);
 			player2.push_back(card2);
+
 		}
 		else if (card1 == card2)
 		{
 			cout << "\n\t\tPlayer1:  " << player1.front() << "\tPlayer2:  " << player2.front() << " -> Tie breaker begins!";
-			do
+			while (!player1.empty() || !player2.empty())
 			{
-				vector<vector<int>> store_all;
+				vector<vector<int>> store_all(2);
 
 				for (int i = 0; i < 4; i++)
 				{
-					/// <summary>
-					///  1 2 3
-					/// 1 2 3 4 
-					///1
-					/// 
-					/// </summary>
 					if (!player1.empty())
 					{
 						store_all.at(0).push_back(player1.front());
 						player1.pop_front();
 					}
-					if(!player2.empty())
+
+					if (!player2.empty())
 					{
 						store_all.at(1).push_back(player2.front());
 						player2.pop_front();
@@ -119,27 +115,20 @@ void option1()
 							player2.push_back(store_all.at(i).at(j));
 						}
 					}
-				}
-				else if (player1.empty() || player2.empty()) {
 					break;
 				}
-				else
-					continue;
+			}
 
-			} while (true);
 		}
-		player1.pop_front();
-		player2.pop_front();
-	} while (true);
 
-	if (winner == true)
-	{
+	}
+
+	if (player2.empty())
 		cout << "\n\tPlayer1 wins the war with most number of cards (" << player1.size() << ")";
-	}
+	
 	else
-	{
 		cout << "\n\tPlayer2 wins the war with most number of cards (" << player2.size() << ")";
-	}
+
 	//Testing output of each player's deck
 	//cout << "\n\tPlayer 1\t\tPlayer 2";
 	//for (int i = 0; i < (suite * numberCards) / 2; i++)
