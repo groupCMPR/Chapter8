@@ -43,17 +43,15 @@ int menuOption()
 
 void option1()
 {
-	srand(time(0));
-	int suite = 4;       //Contains the amount of suites in a deck of cards
 	int numberCards = 0; //Contains the amount of cards user inputs
 	deque<int> player1, player2;
 
 	cout << "\n\t1> Simulation of War (card game) using deque STL\n";
-	numberCards = inputInteger("\n\tEnter a number of cards per suite: ", 1, 13);
 
-	fillDeck(suite, numberCards, player1, player2);
+	fillDeck(player1, player2);
 
-	while (!player1.empty() || !player2.empty())
+
+	while (!player1.empty() && !player2.empty())
 	{
 		int card1 = player1.front();
 		int card2 = player2.front();
@@ -68,19 +66,38 @@ void option1()
 		}
 		else if (card1 < card2)
 		{
-			cout << "\n\t\tPlayer1:  " << player1.front() << "\tPlayer2:  " << player2.front() << " -> Player2 wins!";
-			player2.push_back(card1);
+			cout << "\n\t\tPlayer1:  " << card1 << "\tPlayer2:  " << card2 << " -> Player2 wins!";
 			player2.push_back(card2);
+			player2.push_back(card1);
 
 		}
 		else if (card1 == card2)
 		{
-			cout << "\n\t\tPlayer1:  " << player1.front() << "\tPlayer2:  " << player2.front() << " -> Tie breaker begins!";
-			while (!player1.empty() || !player2.empty())
-			{
-				vector<vector<int>> store_all(2);
+			cout << "\n\t\tPlayer1:  " << card1 << "\tPlayer2:  " << card2 << " -> Tie breaker begins!";
+			vector<vector<int>> store_all(2);
+			store_all.at(0).push_back(card1);
+			store_all.at(1).push_back(card2);
 
-				for (int i = 0; i < 4; i++)
+			do{
+				if (player1.empty()) {
+					for (int i = 0; i < store_all.size(); ++i) {
+						for (int j = 0; j < store_all.at(i).size(); ++j) {
+							player2.push_back(store_all.at(i).at(j));
+						}
+					}
+					break;
+				}
+				else if (player2.empty()) {
+					for (int i = 0; i < store_all.size(); ++i) {
+						for (int j = 0; j < store_all.at(i).size(); ++j) {
+							player1.push_back(store_all.at(i).at(j));
+						}
+					}
+
+					break;
+				}
+
+				for (int i = 0; i < 3; i++)
 				{
 					if (!player1.empty())
 					{
@@ -100,6 +117,7 @@ void option1()
 
 				if (last_element_1 > last_element_2) {
 
+					cout << "\n\t\tPlayer1:  " << last_element_1 << "\tPlayer2:  " << last_element_2 << " -> Player1 wins tie breaker!";
 					for (int i = 0; i < store_all.size(); ++i) {
 						for (int j = 0; j < store_all.at(i).size(); ++j) {
 							player1.push_back(store_all.at(i).at(j));
@@ -109,7 +127,7 @@ void option1()
 					break;
 				}
 				else if (last_element_1 < last_element_2) {
-
+					cout << "\n\t\tPlayer1:  " << last_element_1 << "\tPlayer2:  " << last_element_2 << " -> Player2 wins tie breaker!";
 					for (int i = 0; i < store_all.size(); ++i) {
 						for (int j = 0; j < store_all.at(i).size(); ++j) {
 							player2.push_back(store_all.at(i).at(j));
@@ -117,7 +135,9 @@ void option1()
 					}
 					break;
 				}
-			}
+				else if(last_element_1 == last_element_2)
+					cout << "\n\t\tPlayer1:  " << last_element_1 << "\tPlayer2:  " << last_element_2 << " -> Tie Breaker Again";
+			} while (true);
 
 		}
 
@@ -127,37 +147,31 @@ void option1()
 		cout << "\n\tPlayer1 wins the war with most number of cards (" << player1.size() << ")";
 	
 	else
-		cout << "\n\tPlayer2 wins the war with most number of cards (" << player2.size() << ")";
-
-	//Testing output of each player's deck
-	//cout << "\n\tPlayer 1\t\tPlayer 2";
-	//for (int i = 0; i < (suite * numberCards) / 2; i++)
-	//{
-	//	cout << "\n\t" << player1.front() << "\t\t\t" << player2.front();
-	//	player1.pop_front();
-	//	player2.pop_front();
-	//}
+		cout << "\n\tPlayer2 wins the war with most number of cards (" << player2.size() << ")";	
 }
 
 void fillDeck(int suite, int numberCards, deque<int> &player1, deque<int> &player2)
 {
+	int numberCards = inputInteger("\n\tEnter a number of cards per suite: ", 1, 13);
+
+	srand(unsigned(time(0)));
 	deque<int> currentDeck;
 
-	for (int i = 0; i < suite; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 1; j <= numberCards; j++)
+		for (int j = 1; j <= numberCards; ++j)
 		{
 			currentDeck.push_back(j);
 		}
 	}
-	for (int i = 0; i < rand() % 10 + 1; i++)
-	{
-		random_shuffle(currentDeck.begin(), currentDeck.end());
-	}
+	
+	
+	random_shuffle(currentDeck.begin(), currentDeck.end());
 
-	for (int i = 0; i < (suite * numberCards); i++)
+
+	for (int i = 0; i < (4 * numberCards); ++i)
 	{
-		if( i % 2 == 0)
+		if (i % 2 == 0) 
 		{
 			player2.push_back(currentDeck[i]);
 			continue;
