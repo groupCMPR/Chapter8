@@ -28,7 +28,7 @@ void option2();
 void option3();
 
 //Precondition : N/A
-//Posctondition: Calls option 1, 2, and 3
+//Postcondition: Calls option 1, 2, and 3
 int main()
 {
 	do
@@ -49,7 +49,7 @@ int main()
 }
 
 //Precondition : Calls from main
-//Posctondition: Returns integer choice
+//Postcondition: Returns integer choice
 int menuOption()
 {
     cout << "\n\tCMPR131 Chapter 8: Applications using Queues (Final Group 2)";
