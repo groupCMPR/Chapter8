@@ -382,7 +382,7 @@ void option3()
 			if (CostCo_Line.at(i).size() > 1) {
 
 				//if the top is a 0, pops a person and reinitalizes time, counts as serving a  person
-				if (CostCo_Line.at(i).front() == static_cast<size_t>(0)) {
+				if (CostCo_Line.at(i).front() ==0) {
 					CostCo_Line.at(i).pop();
 					CostCo_Line.at(i).front() = line_wait_dist(rng) + 1;
 					++served_amount;
