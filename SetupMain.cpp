@@ -320,8 +320,9 @@ void option3()
 	random_device develop;
 	mt19937 rng(develop());
 
-	int second = inputInteger("Enter the time(0..37800 in seconds) of the store will be operated : ", 0, 37800);
-	int cash_register = inputInteger("Enter the number of cash registers(1..10) :", 1, 10);
+	cout << "\n\t3> Simulation of checkout lines at a CostCo warehouse store";
+	int second = inputInteger("\n\tEnter the time(0..37800 in seconds) of the store will be operated : ", 0, 37800);
+	int cash_register = inputInteger("\n\tEnter the number of cash registers(1..10) :", 1, 10);
 
 	//variables for random number distribution
 	int line_start = 0, line_end = 5, customer_start = 0, customer_end = 0;
@@ -329,7 +330,7 @@ void option3()
 	//choice to change them to make the time more realistic
 	if (inputChar("\n\tDo you want to customize the simulation or leave it as a fast paced simulation (Y/N): ") == 'Y') {
 		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 0, 1500);
-		line_end = inputInteger("\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start + 1, 5000);
+		line_end = inputInteger("\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start, 5000);
 		customer_start = inputInteger("\n\tPlease put in the minimum time it will take for a customer to enter the line: ", 0, 1800);
 		customer_end = inputInteger("\tPlease put in the maximum time it will take for a customer to enter the line: ", customer_start, 1800);
 	}
@@ -367,8 +368,9 @@ void option3()
 				CostCo_Line.at(location).push(line_wait_dist(rng) + 1);
 			}
 
-			//pushes person char(254), resets customer rng
+			//pushes person char number only (254), resets customer rng
 			CostCo_Line.at(location).push(254);
+
 			new_customer = customer_dist(rng);
 		}
 
@@ -380,8 +382,7 @@ void option3()
 			if (CostCo_Line.at(i).size() > 1) {
 
 				//if the top is a 0, pops a person and reinitalizes time, counts as serving a  person
-				int top = CostCo_Line.at(i).front();
-				if (top == 0) {
+				if (CostCo_Line.at(i).front() == static_cast<size_t>(0)) {
 					CostCo_Line.at(i).pop();
 					CostCo_Line.at(i).front() = line_wait_dist(rng) + 1;
 					++served_amount;
@@ -425,6 +426,6 @@ void option3()
 		--second;
 
 		//to make more visible to person watching the simulation occur
-		this_thread::sleep_for(chrono::milliseconds(100));
+		this_thread::sleep_for(chrono::milliseconds(200));
 	} while (second > -1);
 }
