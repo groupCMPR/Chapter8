@@ -325,11 +325,11 @@ void option3()
 	int cash_register = inputInteger("\n\tEnter the number of cash registers(1..10) :", 1, 10);
 
 	//variables for random number distribution
-	int line_start = 0, line_end = 5, customer_start = 0, customer_end = 0;
+	int line_start = 1, line_end = 5, customer_start = 0, customer_end = 0;
 
 	//choice to change them to make the time more realistic
 	if (inputChar("\n\tDo you want to customize the simulation or leave it as a fast paced simulation (Y/N): ") == 'Y') {
-		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 0, 1500);
+		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 1, 1500);
 		line_end = inputInteger("\n\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start, 5000);
 		customer_start = inputInteger("\n\tPlease put in the minimum time it will take for a customer to enter the line: ", 0, 1800);
 		customer_end = inputInteger("\n\tPlease put in the maximum time it will take for a customer to enter the line: ", customer_start, 1800);
@@ -384,7 +384,7 @@ void option3()
 			if (CostCo_Line.at(i).size() > 1) {
 
 				//if the top is a 0, pops a person and reinitalizes time, counts as serving a  person
-				if (CostCo_Line.at(i).front() == 0) {
+				if (CostCo_Line.at(i).front() <= 1) {
 					CostCo_Line.at(i).pop();
 					CostCo_Line.at(i).front() = line_wait_dist(rng) + 1;
 					++served_amount;
