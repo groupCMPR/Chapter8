@@ -317,22 +317,23 @@ void option2() {
 //Postcondition: Simulate the checkout line
 void option3()
 {
+	//making a random number
 	random_device develop;
 	mt19937 rng(develop());
 
 	cout << "\n\t3> Simulation of checkout lines at a CostCo warehouse store";
 	int second = inputInteger("\n\tEnter the time(0..37800 in seconds) of the store will be operated : ", 0, 37800);
-	int cash_register = inputInteger("\n\tEnter the number of cash registers(1..10) :", 1, 10);
+	int cash_register = inputInteger("\n\tEnter the number of cash registers(1..10) : ", 1, 10);
 
 	//variables for random number distribution
-	int line_start = 0, line_end = 5, customer_start = 0, customer_end = 0;
+	int line_start = 30, line_end = 40, customer_start = 0, customer_end = 0;
 
 	//choice to change them to make the time more realistic
 	if (inputChar("\n\tDo you want to customize the simulation or leave it as a fast paced simulation (Y/N): ") == 'Y') {
-		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 0, 1500);
-		line_end = inputInteger("\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start, 5000);
-		customer_start = inputInteger("\n\tPlease put in the minimum time it will take for a customer to enter the line: ", 0, 1800);
-		customer_end = inputInteger("\tPlease put in the maximum time it will take for a customer to enter the line: ", customer_start, 1800);
+		line_start = inputInteger("\n\tPlease put in the minimum time it will take for the cashier to service a customer: ", 0, 60);
+		line_end = inputInteger("\n\tPlease put in the maximum time it will take for the cashier to service a customer: ", line_start + 1, 60);
+		customer_start = inputInteger("\n\tPlease put in the minimum time it will take for 10 customer to enter the line: ", 0, 5);
+		customer_end = inputInteger("\n\tPlease put in the maximum time it will take for 10 customer to enter the line: ", customer_start, 5);
 	}
 
 	//creates the distribution
@@ -352,27 +353,31 @@ void option3()
 		//if customer has entered
 		if (new_customer < 1) {
 
-			//finds row of line with less people (must have 2 less)
-			int location = 0;
-			size_t smallest_size = CostCo_Line.at(0).size();
+			//adding in 10 people 
+			for (int j = 0; j < 10; ++j) {
+				//finds row of line with less people (must have 2 less)
+				int location = 0;
+				size_t smallest_size = CostCo_Line.at(0).size();
 
-			for (int i = 1; i < CostCo_Line.size(); ++i) {
-				if (CostCo_Line.at(i).size() + 2 < smallest_size) {
-					smallest_size = (CostCo_Line.at(i).size());
-					location = i;
+				for (int i = 1; i < CostCo_Line.size(); ++i) {
+					if (CostCo_Line.at(i).size() + 2 < smallest_size) {
+						smallest_size = (CostCo_Line.at(i).size());
+						location = i;
+					}
 				}
-			}
 
-			//if row is empty, pushes the waiting time
-			if (CostCo_Line.at(location).empty()) {
-				CostCo_Line.at(location).push(line_wait_dist(rng) + 1);
-			}
+				//if row is empty, pushes the waiting time
+				if (CostCo_Line.at(location).empty()) {
+					CostCo_Line.at(location).push(line_wait_dist(rng));
+				}
 
-			//pushes person char number only (254), resets customer rng
-			CostCo_Line.at(location).push(254);
+				CostCo_Line.at(location).push(254);
 
-			new_customer = customer_dist(rng);
+			}				
+			
+			new_customer = customer_dist(rng) + 1;
 		}
+
 
 		//displays and changes CostCo_Line
 		for (int i = 0; i < CostCo_Line.size(); ++i) {
@@ -381,16 +386,33 @@ void option3()
 			//else if line only has time stored and no people, empty so it is not displayed
 			if (CostCo_Line.at(i).size() > 1) {
 
-				//if the top is a 0, pops a person and reinitalizes time, counts as serving a  person
-				if (CostCo_Line.at(i).front() ==0) {
+				//if 1 min
+				if (CostCo_Line.at(i).front() == 60) {
 					CostCo_Line.at(i).pop();
-					CostCo_Line.at(i).front() = line_wait_dist(rng) + 1;
+					CostCo_Line.at(i).front() = 60;
 					++served_amount;
 				}
+				else {
+					//line will service for 1 min of costco_time and if there is no people left, will wait out the minute
+					for (int j = 0; j < 60 && CostCo_Line.at(i).size() != 1; ++j) {
+						//if the top is a 0, pops a person and reinitalizes time, counts as serving a  person
+						if (CostCo_Line.at(i).front() <= 0) {
+							CostCo_Line.at(i).pop();
+							CostCo_Line.at(i).front() = line_wait_dist(rng) + 1;
+							++served_amount;
+						}
+	
+						//subtracts one second as this is a way to ensure seconds start subtracting when
+						//there is at least one customer present
+						CostCo_Line.at(i).front() = CostCo_Line.at(i).front() - 1;
+					}
+				}
+				
+				//J I C it did not assign a time 
+				if (CostCo_Line.at(i).front() <= 0) {
+					CostCo_Line.at(i).front() = line_wait_dist(rng);
+				}
 
-				//subtracts one second as this is a way to ensure seconds start subtracting when
-				//there is at least one customer present
-				CostCo_Line.at(i).front() = CostCo_Line.at(i).front() - 1;
 			}
 			else if (CostCo_Line.at(i).size() == 1)
 				CostCo_Line.at(i).pop();
